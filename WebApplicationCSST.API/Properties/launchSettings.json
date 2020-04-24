@@ -1,7 +1,7 @@
 {
   "iisSettings": {
     "windowsAuthentication": false,
-    "anonymousAuthentication": true,
+    "anonymousAuthentication": false,
     "iis": {
       "applicationUrl": "http://localhost/CSST",
       "sslPort": 0

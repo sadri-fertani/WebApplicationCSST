@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using System.IO;
 
 namespace WebApplicationCSST
 {
@@ -21,10 +19,6 @@ namespace WebApplicationCSST
                     .UseKestrel()
                     .UseIISIntegration()
                     .UseStartup<Startup>()
-                    //.UseHttpSys(options =>
-                    //{
-                    //    options.Authentication.AllowAnonymous = false;
-                    //})
                     .UseSerilog(
                     (hostingContext, loggerConfiguration) =>
                     {
