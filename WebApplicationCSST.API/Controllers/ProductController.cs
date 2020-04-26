@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.OData;
-using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -14,8 +13,6 @@ using WebApplicationCSST.Service.Models;
 namespace WebApplicationCSST.API.Controllers
 {
     [Route("api/[controller]")]
-    //[ApiController]
-    //[ODataRoutePrefix("product")]
     [ApiController]
     public class ProductController : ControllerBase
     {
@@ -52,7 +49,6 @@ namespace WebApplicationCSST.API.Controllers
         }
 
         [EnableQuery(PageSize = 10)]
-        //[ODataRoute]
         [HttpGet()]
         public async Task<ActionResult<List<ProductModel>>> GetAll()
         {

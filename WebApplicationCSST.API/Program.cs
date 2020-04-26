@@ -8,24 +8,25 @@ namespace WebApplicationCSST
     {
         public static void Main()
         {
-            CreateHostBuilder(null).Build().Run();
+            CreateHostBuilder(null)
+                .Build()
+                .Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+            Host
+            .CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder
+                .UseKestrel()
+                .UseIISIntegration()
+                .UseStartup<Startup>()
+                .UseSerilog((hostingContext, loggerConfiguration) =>
                 {
-                    webBuilder
-                    .UseKestrel()
-                    .UseIISIntegration()
-                    .UseStartup<Startup>()
-                    .UseSerilog(
-                    (hostingContext, loggerConfiguration) =>
-                    {
-                        loggerConfiguration
-                            .ReadFrom.Configuration(hostingContext.Configuration);
-                    }
-                );
+                    loggerConfiguration
+                        .ReadFrom.Configuration(hostingContext.Configuration);
                 });
+            });
     }
 }
