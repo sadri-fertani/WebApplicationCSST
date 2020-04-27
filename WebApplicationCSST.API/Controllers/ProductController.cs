@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.OData;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -30,6 +31,7 @@ namespace WebApplicationCSST.API.Controllers
             _productService = productService;
         }
 
+        [AllowAnonymous]
         [HttpGet("{id:long}")]
         public async Task<ActionResult<ProductModel>> GetOne(long id)
         {
@@ -48,6 +50,7 @@ namespace WebApplicationCSST.API.Controllers
             }
         }
 
+        [Authorize]
         [EnableQuery(PageSize = 10)]
         [HttpGet()]
         public async Task<ActionResult<List<ProductModel>>> GetAll()

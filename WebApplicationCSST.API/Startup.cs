@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using System.Linq;
 using WebApplicationCSST.Repo;
 using WebApplicationCSST.Service;
+using Microsoft.AspNetCore.Server.IISIntegration;
 
 namespace WebApplicationCSST
 {
@@ -28,6 +29,9 @@ namespace WebApplicationCSST
         {
             services
                 .AddDbContext<ApplicationDbContext>();
+
+            services
+                .AddAuthentication(IISDefaults.AuthenticationScheme); 
 
             services
                 .AddAuthorization();
@@ -108,6 +112,9 @@ namespace WebApplicationCSST
 
             app
                 .UseAuthorization();
+            
+            app
+                .UseAuthentication();
 
             app
                 .UseCors("AllowAll");

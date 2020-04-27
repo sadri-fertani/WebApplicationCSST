@@ -19,7 +19,7 @@ namespace WebApplicationCSST
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder
-                .UseKestrel()
+                //.UseKestrel()
                 .UseIISIntegration()
                 .UseStartup<Startup>()
                 .UseSerilog((hostingContext, loggerConfiguration) =>
