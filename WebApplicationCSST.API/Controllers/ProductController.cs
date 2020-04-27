@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +14,7 @@ using WebApplicationCSST.Service.Models;
 namespace WebApplicationCSST.API.Controllers
 {
     [Route("api/[controller]")]
+    [ApiVersion("1.0")]
     [ApiController]
     public class ProductController : ControllerBase
     {
@@ -32,7 +32,8 @@ namespace WebApplicationCSST.API.Controllers
             _productService = productService;
         }
 
-        [AllowAnonymous]
+        //[Authorize(Policy = "ApiReader")]
+        //[AllowAnonymous]
         [HttpGet("{id:long}")]
         public async Task<ActionResult<ProductModel>> GetOne(long id)
         {
@@ -51,6 +52,14 @@ namespace WebApplicationCSST.API.Controllers
             }
         }
 
+        [HttpGet("{id:long}")]
+        [MapToApiVersion("1.1")]
+        public ActionResult<string> GetOneTest(long id)
+        {
+            return $"Just for test {id}";
+        }
+
+
         [Authorize]
         [EnableQuery(PageSize = 10)]
         [HttpGet()]
@@ -59,6 +68,11 @@ namespace WebApplicationCSST.API.Controllers
             try
             {
                 var user = this.User.Identity;
+                var zzz = from c in User.Claims select new { c.Type, c.Value };
+
+                var isLibraryAdmin = User.IsInRole(@"DESKTOP-2B3PHOR\Administrator");
+
+                var isLibraryAdmin_ = User.IsInRole(@"Administrator");
 
                 var products = await _productService.GetProducts();
                 if (products == null) return NotFound($"Aucun produit trouvé.");

@@ -12,6 +12,8 @@ using System.Linq;
 using WebApplicationCSST.Repo;
 using WebApplicationCSST.Service;
 using Microsoft.AspNetCore.Server.IISIntegration;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace WebApplicationCSST
 {
@@ -31,7 +33,22 @@ namespace WebApplicationCSST
                 .AddDbContext<ApplicationDbContext>();
 
             services
-                .AddAuthentication(IISDefaults.AuthenticationScheme); 
+                .AddApiVersioning(options =>
+                {
+                    options.AssumeDefaultVersionWhenUnspecified = true;
+                    options.DefaultApiVersion = new ApiVersion(1, 0);
+                    options.ReportApiVersions = true;
+                    options.ApiVersionReader = new HeaderApiVersionReader("X-Version");
+                });
+
+            services
+                .AddAuthentication(IISDefaults.AuthenticationScheme);
+
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("ApiReader", policy => policy.RequireClaim("scope", "api.scope"));
+            //    options.AddPolicy("ApiAdmin", policy => policy.RequireClaim(ClaimTypes.Role, "ng_client_1.admin"));
+            //});
 
             services
                 .AddAuthorization();
@@ -63,6 +80,7 @@ namespace WebApplicationCSST
             services
                 .AddSwaggerGen(options =>
                 {
+                    options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
                     options.SwaggerDoc("v1", new OpenApiInfo
                     {
                         Title = "CSST API Swagger",
