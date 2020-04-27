@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Authorization;
@@ -57,6 +58,8 @@ namespace WebApplicationCSST.API.Controllers
         {
             try
             {
+                var user = this.User.Identity;
+
                 var products = await _productService.GetProducts();
                 if (products == null) return NotFound($"Aucun produit trouvé.");
 
