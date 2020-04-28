@@ -3,17 +3,18 @@ using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNet.OData.Formatter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using System.Linq;
+using WebApplicationCSST.API.Provider;
 using WebApplicationCSST.Repo;
 using WebApplicationCSST.Service;
-using Microsoft.AspNetCore.Server.IISIntegration;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace WebApplicationCSST
 {
@@ -44,14 +45,11 @@ namespace WebApplicationCSST
             services
                 .AddAuthentication(IISDefaults.AuthenticationScheme);
 
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("ApiReader", policy => policy.RequireClaim("scope", "api.scope"));
-            //    options.AddPolicy("ApiAdmin", policy => policy.RequireClaim(ClaimTypes.Role, "ng_client_1.admin"));
-            //});
+            services
+                .AddRoleAuthorization<WebApplicationRoleProvider>();
 
             services
-                .AddAuthorization();
+               .AddAuthorization();
 
             services
                 .AddAutoMapper(typeof(ApplicationProfile));
@@ -129,10 +127,10 @@ namespace WebApplicationCSST
                 .UseRouting();
 
             app
-                .UseAuthorization();
-            
-            app
                 .UseAuthentication();
+
+            app
+                .UseAuthorization();
 
             app
                 .UseCors("AllowAll");
