@@ -5,11 +5,13 @@ VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplicationCSST.API", "WebApplicationCSST.API\WebApplicationCSST.API.csproj", "{F5F93CEB-1F1B-4695-BCEE-0D90115071F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplicationCSST.Data", "WebApplicationCSST.Data\WebApplicationCSST.Data.csproj", "{769FDB1F-F0AF-4B88-8E24-B6BEB20D067F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplicationCSST.Data", "WebApplicationCSST.Data\WebApplicationCSST.Data.csproj", "{769FDB1F-F0AF-4B88-8E24-B6BEB20D067F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplicationCSST.Repo", "WebApplicationCSST.Repo\WebApplicationCSST.Repo.csproj", "{4BB76896-F30C-4494-94E2-A6D21E526048}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplicationCSST.Repo", "WebApplicationCSST.Repo\WebApplicationCSST.Repo.csproj", "{4BB76896-F30C-4494-94E2-A6D21E526048}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplicationCSST.Service", "WebApplicationCSST.Service\WebApplicationCSST.Service.csproj", "{904CFC69-AD51-4F0B-B73F-8B968B2FDD1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplicationCSST.Service", "WebApplicationCSST.Service\WebApplicationCSST.Service.csproj", "{904CFC69-AD51-4F0B-B73F-8B968B2FDD1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplicationCSST.Test", "WebApplicationCSST.Test\WebApplicationCSST.Test.csproj", "{F28EA040-7F81-4367-A19E-E3F4AB2CFBC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{904CFC69-AD51-4F0B-B73F-8B968B2FDD1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{904CFC69-AD51-4F0B-B73F-8B968B2FDD1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{904CFC69-AD51-4F0B-B73F-8B968B2FDD1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F28EA040-7F81-4367-A19E-E3F4AB2CFBC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F28EA040-7F81-4367-A19E-E3F4AB2CFBC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F28EA040-7F81-4367-A19E-E3F4AB2CFBC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F28EA040-7F81-4367-A19E-E3F4AB2CFBC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

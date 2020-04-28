@@ -67,12 +67,12 @@ namespace WebApplicationCSST.API.Controllers
         {
             try
             {
-                var user = this.User.Identity;
-                var zzz = from c in User.Claims select new { c.Type, c.Value };
+                //var user = this.User.Identity;
+                //var zzz = from c in User.Claims select new { c.Type, c.Value };
 
-                var isLibraryAdmin = User.IsInRole(@"DESKTOP-2B3PHOR\Administrator");
+                //var isLibraryAdmin = User.IsInRole(@"DESKTOP-2B3PHOR\Administrator");
 
-                var isLibraryAdmin_ = User.IsInRole(@"Administrator");
+                //var isLibraryAdmin_ = User.IsInRole(@"Administrator");
 
                 var products = await _productService.GetProducts();
                 if (products == null) return NotFound($"Aucun produit trouvé.");
