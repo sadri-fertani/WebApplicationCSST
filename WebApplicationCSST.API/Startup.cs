@@ -4,6 +4,7 @@ using Microsoft.AspNet.OData.Formatter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using System.Linq;
-using WebApplicationCSST.API.Provider;
+using WebApplicationCSST.API.Provider.Role;
 using WebApplicationCSST.Repo;
 using WebApplicationCSST.Service;
 
@@ -31,6 +32,13 @@ namespace WebApplicationCSST
         public void ConfigureServices(IServiceCollection services)
         {
             services
+                .AddControllers(options =>
+                {
+                    options.EnableEndpointRouting = false;
+                    options.Filters.Add(new AuthorizeFilter());
+                });
+
+            services
                 .AddDbContext<ApplicationDbContext>();
 
             services
@@ -46,10 +54,8 @@ namespace WebApplicationCSST
                 .AddAuthentication(IISDefaults.AuthenticationScheme);
 
             services
-                .AddRoleAuthorization<WebApplicationRoleProvider>();
-
-            services
-               .AddAuthorization();
+                .AddRoleAuthorization<WebApplicationRoleProvider>()
+                .AddAuthorization();
 
             services
                 .AddAutoMapper(typeof(ApplicationProfile));
@@ -71,9 +77,6 @@ namespace WebApplicationCSST
                         .AllowAnyHeader();
                     });
                 });
-
-            services
-                .AddControllers(mvcOptions => mvcOptions.EnableEndpointRouting = false);
 
             services
                 .AddSwaggerGen(options =>

@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace WebApplicationCSST.API.Provider
+namespace WebApplicationCSST.API.Provider.Role
 {
     public interface IRoleProvider
     {

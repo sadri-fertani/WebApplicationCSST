@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
-namespace WebApplicationCSST.API.Provider
+namespace WebApplicationCSST.API.Provider.Role
 {
     public class WebApplicationRoleProvider : IRoleProvider
     {
@@ -18,15 +18,15 @@ namespace WebApplicationCSST.API.Provider
             result.Add(BASIC_USER);
 
             // Get groups name
-            var groups = getGroupName(WindowsIdentity.GetCurrent().Groups);
+            var groups = GetGroupName(WindowsIdentity.GetCurrent().Groups);
 
-            if (groups.Contains(@"INTRA\G_VPN_Pandemie"))
+            if (groups.Contains(@"INTRA\G_VPN_Pandemie") || groups.Contains(@"MicrosoftAccount\sadri.fertani@live.fr"))
                 result.Add(ADMIN);
 
             return Task.FromResult(result);
         }
 
-        private IList<string> getGroupName(IdentityReferenceCollection identityReferences)
+        private IList<string> GetGroupName(IdentityReferenceCollection identityReferences)
         {
             IList<string> result = new List<string>();
 

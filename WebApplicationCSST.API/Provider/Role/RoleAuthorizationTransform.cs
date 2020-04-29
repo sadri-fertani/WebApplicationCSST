@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 
-namespace WebApplicationCSST.API.Provider
+namespace WebApplicationCSST.API.Provider.Role
 {
     /// <summary>
     /// Implements a <see cref="IClaimsTransformation" /> that uses a <see cref="IRoleProvider" /> to fetch and apply

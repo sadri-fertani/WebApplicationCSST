@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 using WebApplicationCSST.Service.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebApplicationCSST.Test
+namespace WebApplicationCSST.API.Unit.Tests
 {
-    public class UnitTestProductController
+    public class ProductControllerUnitTests
     {
         private Mock<LinkGenerator> _mockLinkGenerator;
         private Mock<ILogger<ProductController>> _mockLogger;

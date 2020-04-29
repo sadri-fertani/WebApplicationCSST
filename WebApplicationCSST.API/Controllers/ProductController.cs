@@ -8,12 +8,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using WebApplicationCSST.API.Provider.Role;
 using WebApplicationCSST.Service;
 using WebApplicationCSST.Service.Models;
 
 namespace WebApplicationCSST.API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiVersion("1.0")]
     [ApiController]
     public class ProductController : ControllerBase
@@ -32,8 +34,8 @@ namespace WebApplicationCSST.API.Controllers
             _productService = productService;
         }
 
-        //[Authorize(Policy = "ApiReader")]
-        //[AllowAnonymous]
+        //[Authorize]
+        [AllowAnonymous]
         [HttpGet("{id:long}")]
         public async Task<ActionResult<ProductModel>> GetOne(long id)
         {
@@ -59,8 +61,7 @@ namespace WebApplicationCSST.API.Controllers
             return $"Just for test {id}";
         }
 
-
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = WebApplicationRoleProvider.ADMIN)]
         [EnableQuery(PageSize = 10)]
         [HttpGet()]
         public async Task<ActionResult<List<ProductModel>>> GetAll()
