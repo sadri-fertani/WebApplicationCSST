@@ -34,7 +34,6 @@ namespace WebApplicationCSST.API.Controllers
             _productService = productService;
         }
 
-        //[Authorize]
         [AllowAnonymous]
         [HttpGet("{id:long}")]
         public async Task<ActionResult<ProductModel>> GetOne(long id)
@@ -61,8 +60,9 @@ namespace WebApplicationCSST.API.Controllers
             return $"Just for test {id}";
         }
 
+        //[AllowAnonymous]
         [Authorize(Roles = WebApplicationRoleProvider.ADMIN)]
-        [EnableQuery(PageSize = 10)]
+        //[EnableQuery(PageSize = 10)]
         [HttpGet()]
         public async Task<ActionResult<List<ProductModel>>> GetAll()
         {

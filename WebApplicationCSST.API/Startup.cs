@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,15 @@ namespace WebApplicationCSST
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services
+                .AddResponseCompression(options =>
+                {
+                    options.Providers.Add<BrotliCompressionProvider>();
+                    options.Providers.Add<GzipCompressionProvider>();
+
+                    options.EnableForHttps = true;
+                });
+
             services
                 .AddControllers(options =>
                 {
@@ -117,6 +127,9 @@ namespace WebApplicationCSST
         {
             app
                 .UseStaticFiles();
+
+            app
+                .UseResponseCompression();
 
             if (env.IsDevelopment())
             {
