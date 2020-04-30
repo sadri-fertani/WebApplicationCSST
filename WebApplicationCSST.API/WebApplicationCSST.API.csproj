@@ -40,7 +40,7 @@
 
   <ItemGroup>
     <None Update="csst_demo.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="csst_demo.db-shm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

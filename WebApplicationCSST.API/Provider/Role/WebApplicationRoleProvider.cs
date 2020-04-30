@@ -20,7 +20,10 @@ namespace WebApplicationCSST.API.Provider.Role
             // Get groups name
             var groups = GetGroupName(WindowsIdentity.GetCurrent().Groups);
 
-            if (groups.Contains(@"INTRA\G_VPN_Pandemie") || groups.Contains(@"MicrosoftAccount\sadri.fertani@live.fr"))
+            if (
+                groups.Contains(@"INTRA\G_VPN_Pandemie") || 
+                groups.Contains(@"MicrosoftAccount\sadri.fertani@live.fr") ||
+                groups.Contains(@"NT AUTHORITY\Authenticated Users"))
                 result.Add(ADMIN);
 
             return Task.FromResult(result);

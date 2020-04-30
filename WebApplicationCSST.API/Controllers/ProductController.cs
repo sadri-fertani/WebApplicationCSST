@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.OData;
+﻿using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using WebApplicationCSST.API.Provider.Role;
 using WebApplicationCSST.Service;
 using WebApplicationCSST.Service.Models;
@@ -20,16 +19,13 @@ namespace WebApplicationCSST.API.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly LinkGenerator _linkGenerator;
         private readonly ILogger<ProductController> _logger;
         private readonly IProductService _productService;
 
         public ProductController(
-            LinkGenerator linkGenerator,
             ILogger<ProductController> logger,
             IProductService productService)
         {
-            _linkGenerator = linkGenerator;
             _logger = logger;
             _productService = productService;
         }
@@ -60,9 +56,8 @@ namespace WebApplicationCSST.API.Controllers
             return $"Just for test {id}";
         }
 
-        //[AllowAnonymous]
         [Authorize(Roles = WebApplicationRoleProvider.ADMIN)]
-        //[EnableQuery(PageSize = 10)]
+        [EnableQuery(PageSize = 10)]
         [HttpGet()]
         public async Task<ActionResult<List<ProductModel>>> GetAll()
         {
@@ -87,12 +82,8 @@ namespace WebApplicationCSST.API.Controllers
             try
             {
                 var newModel = await _productService.InsertProduct(model);
-
-                var url = _linkGenerator.GetPathByAction(HttpContext,
-                      "GetOne",
-                      values: new { id = newModel.Id });
-
-                return Created(url, newModel);
+                
+                return CreatedAtAction(nameof(GetOne), new { id = newModel.Id }, newModel);
             }
             catch (Exception ex)
             {
@@ -103,7 +94,7 @@ namespace WebApplicationCSST.API.Controllers
         }
 
         [HttpPut()]
-        public async Task<ActionResult<ProductModel>> Put(ProductModel model)
+        public async Task<IActionResult> Put(ProductModel model)
         {
             try
             {
@@ -112,11 +103,7 @@ namespace WebApplicationCSST.API.Controllers
 
                 await _productService.UpdateProduct(model);
 
-                var url = _linkGenerator.GetPathByAction(HttpContext,
-                      "GetOne",
-                      values: new { id = product.Id });
-
-                return Created(url, model);
+                return NoContent();
             }
             catch (Exception ex)
             {
@@ -136,7 +123,7 @@ namespace WebApplicationCSST.API.Controllers
 
                 await _productService.DeleteProduct(id);
 
-                return StatusCode(StatusCodes.Status200OK);
+                return product;
             }
             catch (Exception ex)
             {

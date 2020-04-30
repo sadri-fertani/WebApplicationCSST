@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WebApplicationCSST.API.Client": {
+      "commandName": "Project",
+      "commandLineArgs": "1 2 20"
+    }
+  }
+}
