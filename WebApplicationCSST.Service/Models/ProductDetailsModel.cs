@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplicationCSST.Service.Models
 {
+    [Serializable]
     public partial class ProductDetailsModel
     {
         public int Id { get; set; }

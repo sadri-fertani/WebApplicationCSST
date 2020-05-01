@@ -2,15 +2,15 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using WebApplicationCSST.API.Extensions;
 using WebApplicationCSST.API.Provider.Role;
-//using WebApplicationCSST.API.Provider.Role;
 using WebApplicationCSST.Service;
 using WebApplicationCSST.Service.Models;
 
@@ -24,17 +24,21 @@ namespace WebApplicationCSST.API.Controllers
         private readonly ILogger<ProductController> _logger;
         private readonly IProductService _productService;
         private readonly IMemoryCache _memoryCache;
+        private readonly IDistributedCache _distributedCache;
 
         public const string MC_PRODUCTS = "MC_PRODUCTS";
+        public const string DC_PRODUCT = "DC_PRODUCT";
 
         public ProductController(
             ILogger<ProductController> logger,
             IProductService productService,
-            IMemoryCache memoryCache)
+            IMemoryCache memoryCache,
+            IDistributedCache distributedCache)
         {
             _logger = logger;
             _productService = productService;
             _memoryCache = memoryCache;
+            _distributedCache = distributedCache;
         }
 
         [AllowAnonymous]
@@ -202,6 +206,64 @@ namespace WebApplicationCSST.API.Controllers
 
                     return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
                 }
+            }
+        }
+
+        [AllowAnonymous]
+        [Route("OneDistributedCacheActivated/{id:long}")]
+        [HttpGet()]
+        public async Task<ActionResult<ProductModel>> GetOneWithDistributedCacheActivated(long id)
+        {
+            ProductModel product = null;
+
+            try
+            {
+                product = (await _distributedCache.GetAsync($"{DC_PRODUCT}-{id}")).ToObject<ProductModel>();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogCritical($"Error get-one-product-from-distributed-cache : {ex.Message}");
+            }
+            
+            try
+            {
+                if (product == null)
+                {
+                    product = await _productService.GetProduct(id);
+                    if (product == null) return NotFound($"Produit ayant l'id: {id} est introuvable.");
+
+                    _logger.LogInformation($"Product {product.ProductName} loaded from Database.");
+
+                    // Save data in cache.
+                    try
+                    {
+                        _distributedCache.Set(
+                            $"{DC_PRODUCT}-{id}",
+                            product.ToByteArray<ProductModel>(),
+                            new DistributedCacheEntryOptions
+                            {
+                                AbsoluteExpiration = DateTime.Now.AddMinutes(30),
+                                SlidingExpiration = TimeSpan.FromMinutes(10.0)
+                            }
+                        );
+                    }
+                    catch(Exception ex)
+                    {
+                        _logger.LogCritical($"Error set-one-product-to-distributed-cache : {ex.Message}");
+                    }
+                }
+                else
+                {
+                    _logger.LogInformation($"Product {product.ProductName} loaded from DistributedCache.");
+                }
+
+                return product;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Error product-get-all : {ex.Message}");
+
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
         #endregion

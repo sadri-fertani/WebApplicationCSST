@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebApplicationCSST.Service.Models
 {
+    [Serializable]
     public partial class ProductModel
     {
         public long Id { get; set; }

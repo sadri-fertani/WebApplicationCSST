@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -17,12 +19,16 @@ namespace WebApplicationCSST.API.Unit.Tests
     {
         private Mock<ILogger<ProductController>> _mockLogger;
         private Mock<IProductService> _mockProductService;
+        private Mock<IMemoryCache> _mockMemoryCache;
+        private Mock<IDistributedCache> _mockDistributedCache;
 
         [OneTimeSetUp]
         public void Setup()
         {
             _mockLogger = new Mock<ILogger<ProductController>>();
             _mockProductService = new Mock<IProductService>();
+            _mockMemoryCache = new Mock<IMemoryCache>();
+            _mockDistributedCache = new Mock<IDistributedCache>();
         }
 
         [Test]
@@ -41,7 +47,9 @@ namespace WebApplicationCSST.API.Unit.Tests
 
             var controller = new ProductController(
                 _mockLogger.Object,
-                _mockProductService.Object);
+                _mockProductService.Object,
+                _mockMemoryCache.Object,
+                _mockDistributedCache.Object);
 
             // Act
             var actionResult = await controller.GetOne(219);
@@ -58,7 +66,9 @@ namespace WebApplicationCSST.API.Unit.Tests
         {
             var controller = new ProductController(
                 _mockLogger.Object,
-                _mockProductService.Object);
+                _mockProductService.Object,
+                _mockMemoryCache.Object,
+                _mockDistributedCache.Object);
 
             // Act
             var actionResult = await controller.GetOne(0);
@@ -84,7 +94,9 @@ namespace WebApplicationCSST.API.Unit.Tests
 
             var controller = new ProductController(
                 _mockLogger.Object,
-                _mockProductService.Object);
+                _mockProductService.Object,
+                _mockMemoryCache.Object,
+                _mockDistributedCache.Object);
 
             // Act
             var result = await controller.GetAll();
@@ -121,7 +133,9 @@ namespace WebApplicationCSST.API.Unit.Tests
 
             var controller = new ProductController(
                 _mockLogger.Object,
-                _mockProductService.Object);
+                _mockProductService.Object,
+                _mockMemoryCache.Object,
+                _mockDistributedCache.Object);
 
             // Act
             var result = await controller.Post(dellBeforeInsert);
@@ -158,7 +172,9 @@ namespace WebApplicationCSST.API.Unit.Tests
 
             var controller = new ProductController(
                 _mockLogger.Object,
-                _mockProductService.Object);
+                _mockProductService.Object,
+                _mockMemoryCache.Object,
+                _mockDistributedCache.Object);
 
             // Act
             var actionResult = await controller.Put(dellBeforeUpdate);
@@ -181,7 +197,9 @@ namespace WebApplicationCSST.API.Unit.Tests
 
             var controller = new ProductController(
                 _mockLogger.Object,
-                _mockProductService.Object);
+                _mockProductService.Object,
+                _mockMemoryCache.Object,
+                _mockDistributedCache.Object);
 
             _mockProductService
                 .Setup(r => r.GetProduct(dellToDelete.Id)).Returns(Task.FromResult(dellToDelete));

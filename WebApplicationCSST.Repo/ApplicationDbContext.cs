@@ -24,9 +24,12 @@ namespace WebApplicationCSST.Repo
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(
-                _config.GetConnectionString("DefaultConnection"),
-                b => b.MigrationsAssembly("WebApplicationCSST.API")) ;
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(
+                  _config.GetConnectionString("DefaultConnection"),
+                  b => b.MigrationsAssembly("WebApplicationCSST.API"));
+            }
         }
     }
 }
