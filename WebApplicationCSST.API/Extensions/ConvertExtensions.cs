@@ -33,7 +33,7 @@ namespace WebApplicationCSST.API.Extensions
         /// <returns>Object</returns>
         public static T ToObject<T>(this byte[] data)
         {
-            if (data == null) return default(T);
+            if (data == null) return default;
 
             BinaryFormatter bf = new BinaryFormatter();
 

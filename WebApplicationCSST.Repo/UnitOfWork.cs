@@ -10,20 +10,23 @@ namespace WebApplicationCSST.Repo
 {
     public class UnitOfWork : IUnitOfWork<ApplicationDbContext>
     {
-        public ApplicationDbContext _context { get; }
+        public ApplicationDbContext Context { get; }
+
         private readonly Dictionary<Type, object> _repositories;
+        private readonly ILogger<UnitOfWork> _logger;
         private bool _disposed;
 
         public UnitOfWork(ApplicationDbContext context, ILogger<UnitOfWork> logger)
         {
-            _context = context;
+            Context = context;
             _disposed = false;
             _repositories = new Dictionary<Type, object>();
+            _logger = logger;
         }
 
         public async Task<int> CommitAsync()
         {
-            return await _context.SaveChangesAsync();
+            return await Context.SaveChangesAsync();
         }
 
         public IRepository<T> GetRepository<T>() where T : BaseEntity
@@ -31,12 +34,16 @@ namespace WebApplicationCSST.Repo
             // Checks if the Dictionary Key contains the Model class
             if (_repositories.Keys.Contains(typeof(T)))
             {
+                _logger.LogInformation($"Get old instance of Repository for {typeof(T).Name}");
+
                 // Return the repository for that Model class
                 return _repositories[typeof(T)] as IRepository<T>;
             }
 
             // If the repository for that Model class doesn't exist, create it
             var repository = new Repository<T>(this);
+
+            _logger.LogInformation($"Create a new instance of Repository for {typeof(T).Name}");
 
             // Add it to the dictionary
             _repositories.Add(typeof(T), repository);
@@ -56,7 +63,7 @@ namespace WebApplicationCSST.Repo
 
             if (disposing)
             {
-                _context.Dispose();
+                Context.Dispose();
             }
             
             _disposed = true;

@@ -14,6 +14,6 @@ namespace WebApplicationCSST.Repo
 
     public interface IUnitOfWork<out TContext> : IUnitOfWork where TContext : DbContext
     {
-        TContext _context { get; }
+        TContext Context { get; }
     }
 }

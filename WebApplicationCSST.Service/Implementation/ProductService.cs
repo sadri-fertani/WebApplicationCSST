@@ -26,13 +26,17 @@ namespace WebApplicationCSST.Service
 
         public async Task<ProductModel> GetProduct(long id)
         {
-            var currentProduct = await _uow.GetRepository<Product>().GetAsync(id);
-            
+            _logger.LogInformation($"Srv - GetProduct - {id}");
+
+            var currentProduct = await _uow.GetRepository<Product>().GetAsync(id);            
+
             return _mapper.Map<ProductModel>(currentProduct);
         }
 
         public async Task<IEnumerable<ProductModel>> GetProducts()
         {
+            _logger.LogInformation("Srv - GetProducts");
+
             var currentProducts = await _uow.GetRepository<Product>().GetAsync();
 
             return _mapper.Map<IEnumerable<ProductModel>>(currentProducts);
@@ -40,6 +44,8 @@ namespace WebApplicationCSST.Service
 
         public async Task<ProductModel> InsertProduct(ProductModel model)
         {
+            _logger.LogInformation("Srv - InsertProduct");
+
             var product = _mapper.Map<Product>(model);
 
             // Init fields (AddedDate & ModifiedDate)
@@ -55,6 +61,8 @@ namespace WebApplicationCSST.Service
 
         public async Task UpdateProduct(ProductModel model)
         {
+            _logger.LogInformation($"Srv - UpdateProduct - {model.Id}");
+
             var oldProduct = await _uow.GetRepository<Product>().GetAsync(model.Id);
 
             var product = _mapper.Map<Product>(model);
@@ -70,6 +78,8 @@ namespace WebApplicationCSST.Service
 
         public async Task DeleteProduct(long id)
         {
+            _logger.LogInformation($"Srv - DeleteProduct - {id}");
+
             var product = await _uow.GetRepository<Product>().GetAsync(id);
             if (product == null) throw new ArgumentException($"Product with id {id} unfound");
 
