@@ -3,6 +3,7 @@ using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNet.OData.Formatter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Linq;
 using WebApplicationCSST.API.Provider.Role;
 using WebApplicationCSST.Repo;
@@ -52,6 +54,9 @@ namespace WebApplicationCSST
                 .AddDbContext<ApplicationDbContext>();
 
             services
+                .AddMemoryCache();
+
+            services
                 .AddApiVersioning(options =>
                 {
                     options.AssumeDefaultVersionWhenUnspecified = true;
@@ -79,6 +84,7 @@ namespace WebApplicationCSST
             services
                 .AddCors(options =>
                 {
+                    // Windows authentification --> Intranet --> All are my friends
                     options.AddPolicy("AllowAll", builder =>
                     {
                         builder
@@ -110,6 +116,14 @@ namespace WebApplicationCSST
             services
                 .AddMvcCore(options =>
                 {
+                    options.CacheProfiles.Add("Default30",
+                        new CacheProfile()
+                        {
+                            Duration = 30,
+                            Location = ResponseCacheLocation.Any,
+                            VaryByHeader = "User-Agent"
+                        });
+
                     foreach (var outputFormatter in options.OutputFormatters.OfType<ODataOutputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
                     {
                         outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));

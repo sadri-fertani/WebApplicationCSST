@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
@@ -23,14 +24,22 @@ namespace WebApplicationCSST.API.Integration.Tests
 
                 webBuilder.ConfigureServices(services =>
                 {
-                    services.AddDbContext<ApplicationDbContext>(opt =>
-                    {
-                        opt.UseInMemoryDatabase(databaseName: "InMemoryDb");
-                    });
-                    
                     // Build the service provider.
-                    var sp = services.BuildServiceProvider();
+                    var sp = services
+                        .AddEntityFrameworkInMemoryDatabase()
+                        .BuildServiceProvider();
 
+                    services
+                        .AddAuthentication("Test")
+                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+
+                    services
+                        .AddDbContext<ApplicationDbContext>(opt =>
+                        {
+                            opt.UseInMemoryDatabase(databaseName: "InMemoryDb");
+                            opt.UseInternalServiceProvider(sp);
+                        });
+                    
                     // Create a scope to obtain a reference to the database contexts
                     using (var scope = sp.CreateScope())
                     {

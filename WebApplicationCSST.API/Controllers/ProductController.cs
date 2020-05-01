@@ -2,11 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using WebApplicationCSST.API.Provider.Role;
 //using WebApplicationCSST.API.Provider.Role;
 using WebApplicationCSST.Service;
 using WebApplicationCSST.Service.Models;
@@ -14,23 +17,27 @@ using WebApplicationCSST.Service.Models;
 namespace WebApplicationCSST.API.Controllers
 {
     [Route("api/[controller]")]
-    [AllowAnonymous]
     [ApiVersion("1.0")]
     [ApiController]
     public class ProductController : ControllerBase
     {
         private readonly ILogger<ProductController> _logger;
         private readonly IProductService _productService;
+        private readonly IMemoryCache _memoryCache;
+
+        public const string MC_PRODUCTS = "MC_PRODUCTS";
 
         public ProductController(
             ILogger<ProductController> logger,
-            IProductService productService)
+            IProductService productService,
+            IMemoryCache memoryCache)
         {
             _logger = logger;
             _productService = productService;
+            _memoryCache = memoryCache;
         }
 
-        //[AllowAnonymous]
+        [AllowAnonymous]
         [HttpGet("{id:long}")]
         public async Task<ActionResult<ProductModel>> GetOne(long id)
         {
@@ -49,14 +56,7 @@ namespace WebApplicationCSST.API.Controllers
             }
         }
 
-        [HttpGet("{id:long}")]
-        [MapToApiVersion("1.1")]
-        public ActionResult<string> GetOneTest(long id)
-        {
-            return $"Just for test {id}";
-        }
-
-        //[Authorize(Roles = WebApplicationRoleProvider.ADMIN)]
+        [Authorize(Roles = WebApplicationRoleProvider.ADMIN)]
         [EnableQuery(PageSize = 10)]
         [HttpGet()]
         public async Task<ActionResult<List<ProductModel>>> GetAll()
@@ -82,7 +82,7 @@ namespace WebApplicationCSST.API.Controllers
             try
             {
                 var newModel = await _productService.InsertProduct(model);
-                
+
                 return CreatedAtAction(nameof(GetOne), new { id = newModel.Id }, newModel);
             }
             catch (Exception ex)
@@ -132,5 +132,78 @@ namespace WebApplicationCSST.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        #region Remove me  <-> Just for demo
+        [AllowAnonymous]
+        [HttpGet("{id:long}")]
+        [MapToApiVersion("1.1")]
+        public ActionResult<string> GetOneTest(long id)
+        {
+            return $"Just for test {id}";
+        }
+
+        [AllowAnonymous]
+        [Route("AllResponseCacheActivated")]
+        [HttpGet()]
+        [ResponseCache(CacheProfileName = "Default30")]
+        public async Task<ActionResult<List<ProductModel>>> GetAllWithResponseCacheActivated()
+        {
+            try
+            {
+                var products = await _productService.GetProducts();
+                if (products == null) return NotFound($"Aucun produit trouvé.");
+
+                return products.ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error product-get-all : {ex.Message}");
+
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [Route("AllMemoryCacheActivated")]
+        [HttpGet()]
+        public async Task<ActionResult<List<ProductModel>>> GetAllWithMemoryCacheActivated()
+        {
+            //Look for cache key.
+            if (_memoryCache.TryGetValue(MC_PRODUCTS, out IEnumerable<ProductModel> products))
+            {
+                _logger.LogInformation("List of products loaded from MemoryCache.");
+
+                return products.ToList();
+            }
+            else
+            {
+                try
+                {
+                    products = await _productService.GetProducts();
+                    if (products == null) return NotFound($"Aucun produit trouvé.");
+
+                    // Save data in cache.
+                    _memoryCache.Set(
+                        MC_PRODUCTS,
+                        products,
+                        new MemoryCacheEntryOptions
+                        {
+                            AbsoluteExpiration = DateTime.Now.AddMinutes(30),
+                            Priority = CacheItemPriority.Normal
+                        });
+
+                    _logger.LogInformation("List of products loaded from Database.");
+
+                    return products.ToList();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogInformation($"Error product-get-all : {ex.Message}");
+
+                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                }
+            }
+        }
+        #endregion
     }
 }

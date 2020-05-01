@@ -133,7 +133,7 @@ namespace WebApplicationCSST.API.Unit.Tests
         }
 
         [Test]
-        public async Task UpdateOne_WhenCalled_ReturnProductModelResult_Async()
+        public async Task UpdateOne_WhenCalled_ReturnNoContentResult_Async()
         {
             // Arrange
             ProductModel dellBeforeUpdate = new ProductModel
@@ -161,12 +161,11 @@ namespace WebApplicationCSST.API.Unit.Tests
                 _mockProductService.Object);
 
             // Act
-            var result = await controller.Put(dellBeforeUpdate);
+            var actionResult = await controller.Put(dellBeforeUpdate);
 
             // Assert
-            var actionResult = result;
             Assert.IsNotNull(actionResult);
-            Assert.AreEqual((actionResult as StatusCodeResult).StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
+            Assert.AreEqual((actionResult as StatusCodeResult).StatusCode, StatusCodes.Status204NoContent);
         }
 
         [Test]

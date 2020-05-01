@@ -1,12 +1,20 @@
+/*
+ * https://github.com/tomaszeman/Xunit.Extensions.Ordering
+ * --> There is no guarantee for Theory method execution order
+ */
+
+using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using WebApplicationCSST.Service.Models;
 using Xunit;
 using Xunit.Extensions.Ordering;
+
 
 namespace WebApplicationCSST.API.Integration.Tests
 {
@@ -16,7 +24,12 @@ namespace WebApplicationCSST.API.Integration.Tests
 
         public ProductControllerIntegrationTests(AppTestFixture fixture)
         {
-            _client = fixture.CreateClient();
+            _client = fixture.CreateClient(new WebApplicationFactoryClientOptions
+            {
+                AllowAutoRedirect = false                
+            });
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         }
 
         [Theory, Order(0)]
