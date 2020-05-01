@@ -7,14 +7,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApplicationCSST.API.Provider.Role;
+//using WebApplicationCSST.API.Provider.Role;
 using WebApplicationCSST.Service;
 using WebApplicationCSST.Service.Models;
 
 namespace WebApplicationCSST.API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    [AllowAnonymous]
     [ApiVersion("1.0")]
     [ApiController]
     public class ProductController : ControllerBase
@@ -30,7 +30,7 @@ namespace WebApplicationCSST.API.Controllers
             _productService = productService;
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("{id:long}")]
         public async Task<ActionResult<ProductModel>> GetOne(long id)
         {
@@ -56,7 +56,7 @@ namespace WebApplicationCSST.API.Controllers
             return $"Just for test {id}";
         }
 
-        [Authorize(Roles = WebApplicationRoleProvider.ADMIN)]
+        //[Authorize(Roles = WebApplicationRoleProvider.ADMIN)]
         [EnableQuery(PageSize = 10)]
         [HttpGet()]
         public async Task<ActionResult<List<ProductModel>>> GetAll()

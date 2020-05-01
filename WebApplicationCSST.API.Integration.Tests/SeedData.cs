@@ -9,12 +9,18 @@ namespace WebApplicationCSST.API.Integration.Tests
     {
         public static void PopulateTestData(ApplicationDbContext dbContext)
         {
-            foreach (var product in SeedData.GetAllProductInit())
+            try
             {
-                dbContext.Products.Add(product);
-            }
+                foreach (var product in SeedData.GetAllProductInit())
+                {
+                    dbContext.Products.Add(product);
+                }
 
-            dbContext.SaveChanges();
+                dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            { 
+            }
         }
 
         public static List<Product> GetAllProductInit() 
