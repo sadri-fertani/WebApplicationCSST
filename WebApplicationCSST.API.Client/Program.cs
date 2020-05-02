@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
-using System.Text.Json;
 using System.Threading.Tasks;
 using WebApplicationCSST.API.Client.Models;
+using WebApplicationCSST.API.Client.Services;
 
 namespace WebApplicationCSST.API.Client
 {
@@ -17,13 +13,15 @@ namespace WebApplicationCSST.API.Client
         {
             if (args.Any())
             {
+                var srv = new ProductService();
+
                 foreach (var arg in args)
                 {
                     Console.WriteLine();
 
                     try
                     {
-                        var result = await GetProduct(arg);
+                        var result = await srv.GetProduct(arg);
 
                         if (result.StatusCode == HttpStatusCode.OK)
                         {
@@ -52,49 +50,6 @@ namespace WebApplicationCSST.API.Client
             }
             else
                 throw new ArgumentException("No arguments.");
-        }
-
-        public static async Task<ResultModel> GetProduct(string id)
-        {
-            if(!long.TryParse(id, out long idProduct))
-            {
-                return new ResultModel
-                {
-                    StatusCode = HttpStatusCode.BadRequest,
-                    Result = null
-                };
-            }
-
-            var handler = new HttpClientHandler();
-            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-            handler.ClientCertificates.Add(new X509Certificate2("Cert01.cer"));
-            handler.SslProtocols = SslProtocols.Tls12;
-            // Developement : https://docs.microsoft.com/en-us/dotnet/api/system.net.http.httpclienthandler.dangerousacceptanyservercertificatevalidator?view=netcore-3.0
-            handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-            HttpClient client = new HttpClient(handler);
-
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Add("X-Version", "1.0");
-
-            var response = await client.GetAsync($"https://localhost/CSST/api/product/{idProduct}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return new ResultModel
-                {
-                    StatusCode = response.StatusCode,
-                    Result = null
-                };
-            }
-            else
-            {
-                return new ResultModel
-                {
-                    StatusCode = response.StatusCode,
-                    Result = JsonSerializer.Deserialize<ProductModel>(await response.Content.ReadAsStringAsync())
-                };
-            }
         }
     }
 }

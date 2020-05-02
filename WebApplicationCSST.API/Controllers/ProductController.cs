@@ -137,15 +137,18 @@ namespace WebApplicationCSST.API.Controllers
             }
         }
 
-        #region Remove me  <-> Just for demo
+        #region Remove me & Clean code <-> Just for demo [Versionning & Cache]
+        #region Get one Version 1.1
         [AllowAnonymous]
         [HttpGet("{id:long}")]
         [MapToApiVersion("1.1")]
-        public ActionResult<string> GetOneTest(long id)
+        public ActionResult<string> GetOneVersion_1_1(long id)
         {
             return $"Just for test {id}";
         }
+        #endregion
 
+        #region Cache : ResponseCache, MemoryCache & DistributedCache
         [AllowAnonymous]
         [Route("AllResponseCacheActivated")]
         [HttpGet()]
@@ -266,6 +269,7 @@ namespace WebApplicationCSST.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        #endregion
         #endregion
     }
 }
