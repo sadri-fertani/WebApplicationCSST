@@ -15,9 +15,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using System.Linq;
+using WebApplicationCSST.API.Hubs;
 using WebApplicationCSST.API.Provider.Role;
 using WebApplicationCSST.Repo;
 using WebApplicationCSST.Service;
+using WebApplicationCSST.Service.Configuration;
 
 namespace WebApplicationCSST
 {
@@ -80,6 +82,14 @@ namespace WebApplicationCSST
                     options.ReportApiVersions = true;
                     options.ApiVersionReader = new HeaderApiVersionReader("X-Version");
                 });
+
+            // SignalR
+            services
+                .AddSignalR();
+
+            services
+                .AddScoped<IEmailService, EmailService>()
+                .Configure<EmailSettings>(Configuration.GetSection("Services:SendEmailService"));
 
             services
                 .AddAuthentication(IISDefaults.AuthenticationScheme);
@@ -187,6 +197,8 @@ namespace WebApplicationCSST
                     endpoints.MapControllers();
                     endpoints.EnableDependencyInjection();
                     endpoints.Select().Filter().OrderBy().Expand().Count().MaxTop(10);
+
+                    endpoints.MapHub<MessageHub>("/MessageHub");
                 });
 
             app
