@@ -64,6 +64,7 @@ namespace WebApplicationCSST.Repo
             if (disposing)
             {
                 Context.Dispose();
+                _repositories.Clear();
             }
             
             _disposed = true;

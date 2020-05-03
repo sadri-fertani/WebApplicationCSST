@@ -28,7 +28,7 @@ namespace WebApplicationCSST.Service
         {
             _logger.LogInformation($"Srv - GetProduct - {id}");
 
-            var currentProduct = await _uow.GetRepository<Product>().GetAsync(id);            
+            var currentProduct = await _uow.GetRepository<Product>().GetAsync(id);
 
             return _mapper.Map<ProductModel>(currentProduct);
         }

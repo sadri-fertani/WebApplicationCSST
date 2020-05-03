@@ -102,7 +102,7 @@ namespace WebApplicationCSST
                 .AddAutoMapper(typeof(ApplicationProfile));
 
             services
-                .AddTransient<IUnitOfWork, UnitOfWork>();
+                .AddScoped<IUnitOfWork, UnitOfWork>();
 
             services
                 .AddScoped<IProductService, ProductService>();

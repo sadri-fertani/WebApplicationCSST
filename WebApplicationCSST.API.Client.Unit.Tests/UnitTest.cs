@@ -36,10 +36,8 @@ namespace WebApplicationCSST.API.Client.Unit.Tests
             _mockProductService
                 .Setup(r => r.GetProduct("22")).Returns(Task.FromResult(new ResultModel { Result = iPhone, StatusCode = HttpStatusCode.OK }));
 
-            
-
             // Act
-            var result = await _mockProductService.Object.GetProduct(iPhone.Id.ToString());
+            var result = await _mockProductService.Object.GetProduct("22");
 
             // Assert
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
