@@ -52,9 +52,6 @@ namespace WebApplicationCSST
                 });
 
             services
-                .AddDbContext<ApplicationDbContext>();
-
-            services
                 .AddDbContext<ApplicationDbContext>(options => 
                 {
                     options.UseSqlServer(
@@ -110,13 +107,10 @@ namespace WebApplicationCSST
             services
                 .AddCors(options =>
                 {
-                    // Windows authentification --> Intranet --> All are my friends
                     options.AddPolicy("AllowAll", builder =>
                     {
                         builder
-                        .AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader();
+                        .AllowCredentials();
                     });
                 });
 
