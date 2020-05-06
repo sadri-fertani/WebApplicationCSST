@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebApplicationCSST.Data;
 
@@ -10,7 +9,7 @@ namespace WebApplicationCSST.Repo
     {
         Task<T> GetAsync(long id);
         Task<IEnumerable<T>> GetAsync();
-        Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate);
+        IQueryable<T> GetQueryable();
         void Add(T entity);
         void Delete(T entity);
         void Update(T entity);

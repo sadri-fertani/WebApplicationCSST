@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebApplicationCSST.Data;
 
@@ -33,12 +31,9 @@ namespace WebApplicationCSST.Repo
             return await query.ToArrayAsync<T>();
         }
 
-        public async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate)
+        public IQueryable<T> GetQueryable()
         {
-            var query = _unitOfWork.Context.Set<T>().AsQueryable();
-            IncludeChildren(ref query);
-
-            return await query.Where(predicate).ToArrayAsync<T>();
+            return _unitOfWork.Context.Set<T>().AsQueryable();
         }
 
         public void Add(T entity)

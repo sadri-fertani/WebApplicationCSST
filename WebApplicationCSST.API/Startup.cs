@@ -105,6 +105,9 @@ namespace WebApplicationCSST
                 .AddScoped<IProductService, ProductService>();
 
             services
+                .AddScoped<IProductDetailsService, ProductDetailsService>();
+
+            services
                 .AddCors(options =>
                 {
                     options.AddPolicy("AllowAll", builder =>
