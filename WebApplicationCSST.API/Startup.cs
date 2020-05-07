@@ -172,7 +172,12 @@ namespace WebApplicationCSST
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+            else
+            {
+                app
+                    .UseHsts();
+            }
+
             app
                 .UseHttpsRedirection();
 
