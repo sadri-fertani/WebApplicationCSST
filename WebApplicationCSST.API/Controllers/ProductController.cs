@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.OData;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ namespace WebApplicationCSST.API.Controllers
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
     [ApiController]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly ILogger<ProductController> _logger;
@@ -41,7 +43,7 @@ namespace WebApplicationCSST.API.Controllers
             _distributedCache = distributedCache;
         }
 
-        [AllowAnonymous]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id:long}")]
         public async Task<ActionResult<ProductModel>> GetOne(long id)
         {
@@ -60,9 +62,7 @@ namespace WebApplicationCSST.API.Controllers
             }
         }
 
-        [Authorize(Roles = WebApplicationRoleProvider.ADMIN)]
-        [EnableQuery(PageSize = 10)]
-        [HttpGet()]
+        [Authorize(Roles = WebApplicationRoleProvider.SUPER_ADMIN)]
         public async Task<ActionResult<List<ProductModel>>> GetAll()
         {
             try

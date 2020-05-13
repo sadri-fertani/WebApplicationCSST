@@ -7,6 +7,7 @@ namespace WebApplicationCSST.API.Provider.Role
 {
     public class WebApplicationRoleProvider : IRoleProvider
     {
+        public const string SUPER_ADMIN = "SuperAdmin";
         public const string ADMIN = "Admin";
         public const string BASIC_USER = "BasicUser";
 
@@ -14,41 +15,19 @@ namespace WebApplicationCSST.API.Provider.Role
         {
             IList<string> result = new List<string>();
 
-            // Add default use role (because authenticated)
-            result.Add(BASIC_USER);
-
-            // Get groups name
-            var groups = GetGroupName(WindowsIdentity.GetCurrent().Groups);
-
-            if (
-                groups.Contains(@"INTRA\G_VPN_Pandemie") || 
-                groups.Contains(@"MicrosoftAccount\sadri.fertani@live.fr") ||
-                groups.Contains(@"NT AUTHORITY\Authenticated Users"))
-                result.Add(ADMIN);
-
-            return Task.FromResult(result);
-        }
-
-        private IList<string> GetGroupName(IdentityReferenceCollection identityReferences)
-        {
-            IList<string> result = new List<string>();
-
-            if (identityReferences != null)
+            if (identity.IsAuthenticated)
             {
-                foreach (var group in identityReferences)
-                {
-                    try
-                    {
-                        result.Add(group.Translate(typeof(NTAccount)).ToString());
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-                }
+                // Add default use role (because authenticated)
+                result.Add(BASIC_USER);
+
+                // ...
+                string userEmail = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                if (userEmail.ToLowerInvariant().Equals("cedric_sf@hotmail.com"))
+                    result.Add(SUPER_ADMIN);
             }
 
-            return result;
+            return Task.FromResult(result);
         }
     }
 }
