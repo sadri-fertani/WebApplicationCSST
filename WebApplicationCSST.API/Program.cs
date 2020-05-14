@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using Serilog;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.EventLog;
 
 namespace WebApplicationCSST
 {
@@ -19,13 +20,18 @@ namespace WebApplicationCSST
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder
-                //.UseKestrel()
                 .UseIISIntegration()
                 .UseStartup<Startup>()
-                .UseSerilog((hostingContext, loggerConfiguration) =>
+                .ConfigureLogging((hostingContext, loggerConfiguration) =>
                 {
-                    loggerConfiguration
-                        .ReadFrom.Configuration(hostingContext.Configuration);
+                    // clear default logging providers
+                    loggerConfiguration.ClearProviders();
+                    loggerConfiguration.AddEventLog(new EventLogSettings()
+                    {
+                        SourceName = "CNESST_API_DEMO",
+                        LogName = "CNESST_API_DEMO",
+                        Filter = (x, y) => y >= LogLevel.Information
+                    });
                 });
             });
     }
