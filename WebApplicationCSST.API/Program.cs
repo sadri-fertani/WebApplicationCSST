@@ -32,6 +32,8 @@ namespace WebApplicationCSST
                         LogName = "CNESST_API_DEMO",
                         Filter = (x, y) => y >= LogLevel.Information
                     });
+
+                    loggerConfiguration.AddApplicationInsights("c0e575e5-f938-4e04-82a7-3ceca1cc7557");
                 });
             });
     }
