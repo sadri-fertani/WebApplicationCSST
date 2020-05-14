@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNet.OData;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
@@ -43,7 +41,7 @@ namespace WebApplicationCSST.API.Controllers
             _distributedCache = distributedCache;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [AllowAnonymous]
         [HttpGet("{id:long}")]
         public async Task<ActionResult<ProductModel>> GetOne(long id)
         {
@@ -223,11 +221,11 @@ namespace WebApplicationCSST.API.Controllers
             {
                 product = (await _distributedCache.GetAsync($"{DC_PRODUCT}-{id}")).ToObject<ProductModel>();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogCritical($"Error get-one-product-from-distributed-cache : {ex.Message}");
             }
-            
+
             try
             {
                 if (product == null)
@@ -250,7 +248,7 @@ namespace WebApplicationCSST.API.Controllers
                             }
                         );
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         _logger.LogCritical($"Error set-one-product-to-distributed-cache : {ex.Message}");
                     }

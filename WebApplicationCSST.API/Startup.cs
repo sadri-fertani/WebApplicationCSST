@@ -1,6 +1,4 @@
 using AutoMapper;
-using Microsoft.AspNet.OData.Extensions;
-using Microsoft.AspNet.OData.Formatter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,8 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using System.Linq;
 using WebApplicationCSST.API.Hubs;
 using WebApplicationCSST.API.Provider.Role;
 using WebApplicationCSST.Repo;
@@ -126,24 +122,23 @@ namespace WebApplicationCSST
                     });
                 });
 
+            // Register the Swagger services
             services
-                .AddSwaggerGen(options =>
+                .AddSwaggerDocument(options => 
                 {
-                    options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
-                    options.SwaggerDoc("v1", new OpenApiInfo
+                    options.PostProcess = document =>
                     {
-                        Title = "CSST API Swagger",
-                        Version = "v1",
-                        Contact = new OpenApiContact
+                        document.Info.Version = "v1";
+                        document.Info.Title = "CNESST API Swagger";
+                        document.Info.Description = "A simple ASP.NET Core web API";
+                        document.Info.TermsOfService = "None";
+                        document.Info.Contact = new NSwag.OpenApiContact
                         {
                             Name = "Sadri FERTANI",
                             Email = "sadri.fertani@cnesst.gouv.qc.ca"
-                        }
-                    });
+                        };
+                    };
                 });
-
-            services
-                .AddOData();
 
             services
                 .AddMvcCore(options =>
@@ -155,16 +150,6 @@ namespace WebApplicationCSST
                             Location = ResponseCacheLocation.Any,
                             VaryByHeader = "User-Agent"
                         });
-
-                    foreach (var outputFormatter in options.OutputFormatters.OfType<ODataOutputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
-                    {
-                        outputFormatter.SupportedMediaTypes.Add(new Microsoft.Net.Http.Headers.MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
-                    }
-
-                    foreach (var inputFormatter in options.InputFormatters.OfType<ODataInputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
-                    {
-                        inputFormatter.SupportedMediaTypes.Add(new Microsoft.Net.Http.Headers.MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
-                    }
                 });
         }
 
@@ -201,22 +186,16 @@ namespace WebApplicationCSST
 
             app
                 .UseCors("AllowAll");
+            app
+                .UseOpenApi()
+                .UseSwaggerUi3();
 
             app
                 .UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();
-                    endpoints.EnableDependencyInjection();
-                    endpoints.Select().Filter().OrderBy().Expand().Count().MaxTop(10);
 
                     endpoints.MapHub<MessageHub>("/MessageHub");
-                });
-
-            app
-                .UseSwagger()
-                .UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("v1/swagger.json", "CSST API Swagger");
                 });
         }
     }
